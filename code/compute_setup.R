@@ -1,4 +1,4 @@
 # the number of simulations to perform
-nsim <- 5
+nsim <- 2000
 # CPU cores
-cores <- 5
+cores <- 28

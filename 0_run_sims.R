@@ -1,7 +1,7 @@
 # Required directories
 # `save/` used by powerlmm to save intermediate results
 stopifnot(dir.exists("save")) 
-# Complated simulations are saved to `data\`
+# Completed simulations are saved to `data\`
 stopifnot(dir.exists("data"))
 
 # Run all sims

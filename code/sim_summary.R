@@ -44,7 +44,7 @@ saveRDS(res_sum3, file = "data/sim3_sum.Rds")
 # Scenario 4 --------------------------------------------------------------
 res4 <- readRDS("data/sim_4_variance.Rds")
 
-res_sum2 <- summarize_multiple_objects(
+res_sum4 <- summarize_multiple_objects(
     list(res4),
     labels = 4, 
     get_model_func = get_all_models
