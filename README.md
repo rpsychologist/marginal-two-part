@@ -13,9 +13,9 @@ two-part gamma or lognormal model using `brms`.
 # Simulation
 ## Prerequisites
 The following folders must exist:
-  data/
-  save/
-  figures/
+- data/
+- save/
+- figures/
   
 Configure the number of CPU cores and simulation replications 
 in `code/compute_setup.R`
