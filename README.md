@@ -11,7 +11,7 @@ or the source document `tutorial.Rmd`. The tutorial shows hot to fit a custom ma
 two-part gamma or lognormal model using `brms`.
 
 # Simulation
-# Prerequisites
+## Prerequisites
 The following folders must exist:
   data/
   save/
@@ -20,7 +20,7 @@ The following folders must exist:
 Configure the number of CPU cores and simulation replications 
 in `code/compute_setup.R`
 
-# Required packages
+## Required packages
 ```{r}
 install.packages(c("brms", 
                    "powerlmm", 
@@ -30,16 +30,16 @@ install.packages(c("brms",
                    "cowplot"))
 ```
 
-# Run the simulation
+## Run the simulation
 - `0_run_sims.R` sources all the simulation files. 
 
-# Results
+## Results
     - `1_results.R`
       Summarise all the results for the simulation with complete data,
       and saves the figures to `figures\`
     - `1_results_MAR.R`
       Summarizes MAR simulation and creates a table with the results
       
-# Additional code
+## Additional code
 The code used to simulate data from the hurdle model can be found 
 in `powerlmm:::sim_hurdle`
