@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data/*
+save/*
+figures/*
+tutorial/brms_tutorial.rds
