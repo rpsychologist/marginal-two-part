@@ -34,11 +34,12 @@ install.packages(c("brms",
 - `0_run_sims.R` sources all the simulation files. 
 
 ## Results
-    - `1_results.R`
-      Summarise all the results for the simulation with complete data,
-      and saves the figures to `figures\`
-    - `1_results_MAR.R`
-      Summarizes MAR simulation and creates a table with the results
+These two files are used to summarise the results:
+- `1_results.R`
+  Summarise all the results for the simulation with complete data,
+  and saves the figures to `figures\`
+- `1_results_MAR.R`
+  Summarizes MAR simulation and creates a table with the results
       
 ## Additional code
 The code used to simulate data from the hurdle model can be found 
