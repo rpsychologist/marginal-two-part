@@ -1,0 +1,238 @@
+---
+title: 'Tutorial: Fitting the Marginal Two-part Gamma Model Using brms'
+author: "Kristoffer Magnusson"
+date: '2019-08-29'
+output:
+    html_document:
+        toc: true
+        code_folding: show
+---
+```{r, echo = FALSE}
+library(knitr)
+library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE,
+                      fig.align = "center")
+options(width = 120)
+
+```
+
+# Introduction
+This document shows how use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results. 
+
+```{r}
+library(brms)
+library(tidyverse)
+theme_set(theme_minimal())
+source("code/custom_brms.R")
+```
+
+
+# The Data
+This tutorial will use simulated data in order to allow sharing of the data set and reproducing using other software, the data can be found in `tutorial/tutorial.csv`. In the file we have 150 participants allocated either to a control or a treatment condition, each paricipant have 11 weekly measures. The measures represent the average daily gambling losses (in euros) during each week. 
+```{r, eval = FALSE, echo = FALSE}
+# Not run
+####################################
+# Code used to generate data file ##
+####################################
+source("code/sim_1_setup.R")
+set.seed(141414)
+p2 <- update(p2, n2 = 75)
+d <- simulate_data(p2) %>% 
+    mutate(treatment = ifelse(treatment == 0, 1, 0)) %>%  # treatment = 1
+    select(subject,
+           treatment, 
+           time, 
+           y) %>% 
+    as.data.frame
+
+write_csv(d, "tutorial/tutorial.csv")
+```
+
+```{r}
+d <- read_csv("tutorial/tutorial.csv")
+d
+```
+
+# Fit the Model
+The code for the custom family can be found in `code/custom_brms.R`. Since this is a custom model we begin by manually specifying the priors.
+```{r}
+prior <- c(prior(student_t(3, 0, 10), class = "Intercept"),
+           prior(student_t(3, 0, 10), class = sd, dpar = hu),
+           prior(student_t(3, 0, 10), class = sd),
+           prior(gamma(0.01, 0.01), class = "shape"),
+           prior("lkj(1)", class = "cor")
+           )
+```
+
+We can then fit a random intercept and slopes model using the following syntax. 
+
+```{r}
+# compile brms model
+fit <- brm(bf(y ~ time * treatment + (1 + time | c | subject),
+              hu ~ time * treatment + (1 + time | c | subject)),
+           data = d,
+           family = hurdle_gamma_mtp, # code/custom_brms.R
+           stanvar = hurdle_gamma_mtp_stanvars, #code/custom_brms.R
+           file = "tutorial/brms_tutorial",
+           prior = prior,
+           chains = 4,
+           cores = 4,
+           iter = 4000)
+
+```
+
+The `family` and `stanvar` arguments specify the custom model, the other arguments are standard `brms`-syntax, and covariates and random effects can be specified like in any other hurdle model. The model formula, `| c |` specifies that the random effects in the two part of the models are correlated (N.B, "c" i not a variable in our data and could be called something else). Let's view the results.
+
+```{r}
+fit
+```
+
+In this output, the coefficients that begin with `hu_` refer to the binary part of the model, which estimate changes to the log-odds of no losses. The other coefficients refer to the overall losses (which in the marginal two-part model includes the zeros), and they are on the log scale. These coefficients are interpreted like the coefficients from a standard generalized linear mixed-effects model. We will focus on the treatment effects, which in this model are represented by `time:treatment` and `hu_time:treatment`. We can see that the treatment leads to a reduction in the (log) overall losses by -0.11 per week (95% CI: -0.18, -0.04), and that the treatment increases the odds of reporting no losses by 0.07 log-odds per week. Thus it does seem like there is a beneficial effect of the treatment. To better interpret these effects, we will visualize the results and summarize the treatment effects as multiplicate effects and on the original scale. 
+
+# Change Over Time
+In order to visualize change over time, we ignore any random effects and focus on a typical patient with random effects at the center of the distribution.
+```{r}
+
+#' Plot Change Over Time
+#' 
+#' @param fit brms model
+#' @param dpar "mu" = overall mean, "hu" = log-odds from binary part
+#' @param scale "linear" = link scale or "response"
+#'
+#' @return a ggplot2 plot
+plot_trend <- function(fit, dpar = NULL, scale = "linear") {
+    d_fit <- expand.grid(time = 0:10, 
+                         treatment = c(0, 1))
+    d_fit <- fitted(fit, 
+                    newdata = d_fit, 
+                    re_formula = NA, 
+                    dpar = dpar,
+                    scale = scale) %>% 
+        as.data.frame() %>% 
+        select(Estimate,
+               CI_lwr = Q2.5, 
+               CI_upr = Q97.5) %>% 
+        cbind(d_fit, .) %>% 
+        mutate(treatment = factor(treatment, 
+                                  labels = c("Control", 
+                                             "Treatment")))
+    
+    # Plot
+    cols <- c("black", "#21908CFF")
+    ggplot(d_fit, aes(x = time,
+                      y = Estimate, 
+                      group = treatment, 
+                      color = treatment, 
+                      fill = treatment)) + 
+        geom_line() +
+        geom_ribbon(aes(ymin = CI_lwr,
+                        ymax = CI_upr, 
+                        color = NULL), 
+                    alpha = 0.15) +
+        scale_x_continuous(breaks = 0:10) +
+        scale_fill_manual(values = cols) +
+        scale_color_manual(values = cols) +
+        theme(legend.position = "bottom")
+}
+
+plot_trend(fit, scale = "response") + 
+    labs(y = "Losses per day (EUR)",
+         x = "Week",
+         title = "Change in Overall Losses per Week") 
+```
+
+We see that over time, there is an increase in losses in the control group, whereas the treatment group slightly decreases their losses. If we plot the log-odds of reporting no losses, we get the following figure.
+
+```{r}
+plot_trend(fit, dpar = "hu", scale = "linear") + 
+    labs(y = "Log-odds of reporting zero losses",
+         x = "Week",
+         title = "Change in Log-Odds of No Losses") 
+
+```
+
+We can see that there is little change during the treatment, whereas in the control group, there is a reduction in the log-odds of reporting no losses.
+
+# Treatment Effects
+Now, let's summarize the treatment effects at posttest. We will also rescale the average daily losses into the expected losses over 30 days for ease of interpretation. 
+
+```{r}
+# Posterior samples
+samples <- posterior_samples(fit)
+
+#' Function used to summary the effects
+#'
+#' @param .d vector of posterior samples. 
+#'
+#' @return a data.frame with the columns: 
+# * "Estimate" = posterior median
+# * "CI_lwr" = 95% CI lower end
+# * "CI_upr" = 95% CI upper end
+summary_stat <- function(.d) {
+    data.frame(Estimate = median(.d),
+               CI_lwr = quantile(.d, 0.025),
+               CI_upr = quantile(.d, 0.975)) %>% 
+        round(2) %>% 
+        transmute(
+            Estimate = Estimate,
+            "95% CI" = paste0("[", CI_lwr, ", ", CI_upr, "]"))
+}
+
+# Overall losses, rescaled to losses over 30 days
+samples %>% 
+    transmute(control = exp(b_Intercept + b_time * 10) * 30, # 10 = posttest, 
+              treatment = exp(b_Intercept + 
+                                  b_treatment + 
+                                  b_time * 10 + 
+                                  `b_time:treatment` * 10) * 30,
+              difference = treatment - control,
+              "%delta" = (treatment/control - 1) * 100,
+              "OR (zeros)" = exp(`b_hu_time:treatment` * 10)) %>% 
+    map_df(~summary_stat(.), 
+           .id = "Variable") %>% 
+    kable(digits = 1, 
+          caption = "Treatment Effects and Outcomes at Posttest") %>% 
+    kable_styling(full_width = FALSE,
+                  bootstrap_options = c("hover"))
+```
+
+Thus for a "typical" patient (random effects at the center of the distribution), the treatment leads to an expected reduction in the monthly losses of €638 compared to the control group. This is a 66% reduction in the expected losses. Moreover, the treatment leads to a 2-fold increase in the odds of reporting no losses in one week. Although the 95% CI indicate more inconclusive results for the binary part, i.e., the CI includes 1. 
+
+# Posterior Predictive Checks
+Here is is a small example of how a posterior predictive check can be performed. This can be performed using the generic `pp_check`, since `code/custom.brms.R` includes a predict method for the custom model. In the first figure, we draw new samples from the model and compare them to the density of the observed data. 
+```{r pp_density}
+set.seed(3533)
+# Posterior predictive checks
+pp_check(fit, nsamples = 20) +
+    scale_x_continuous(trans = "log1p", 
+                       breaks = c(0, 10, 50, 
+                                  100, 250, 500,
+                                  1000, 2500, 5000)) +
+    theme(legend.position = "bottom") +
+    labs(x = "Losses per day (EUR)")
+
+```
+
+We can also see how well the model captures the number of zeros in the data. In the figure below, we draw 1000 new samples from the fitted model and extract the proportion of zeros in each generated sample.
+
+```{r pp_zeros, fig.cap="Test"}
+# Zeros
+prop_zeros <- function(y) mean(y == 0)
+pp_check(fit, 
+         type = "stat", 
+         stat = prop_zeros, 
+         nsamples = 1000) +
+    labs(x = "Proportion of zeros") +
+    theme(legend.position = "bottom")
+```
+
+# Lognormal Two-Part Model
+The file `code/custom_brms.R` includes the code needed to fit a marginal two-part lognormal model. The custom family is called `hurdle_lognormal_mtp` and the stanvars-object is called `hurdle_lognormal_mtp_stanvars`. The file also includes `fitted`, `predict` and `log_lik` methods for the lognormal MTP.
+
+# Session Info
+```{r}
+sessionInfo()
+```
+
