@@ -1,8 +1,8 @@
-# #################################################################
-# Custom brms family for marginal two-part gamma/lognormal models #
-###################################################################
+# ######################################################################
+# Custom brms family for marginalized two-part gamma/lognormal models #
+#######################################################################
 
-# Custom marginal Gamma two-part family ------------------------------------------
+# Custom marginalized Gamma two-part family ------------------------------------
 hurdle_gamma_mtp <- custom_family(
     "hurdle_gamma_mtp",
     dpars = c("shape","mu", "hu"),
@@ -37,7 +37,7 @@ real hurdle_gamma_mtp_lpdf(real y, real alpha, real mu, real hu) {
 hurdle_gamma_mtp_stanvars <- stanvar(scode = scode,
                                      block = "functions")
 
-# Custom lognormal marginal two-part family ------------------------------------------
+# Custom lognormal marginalized two-part family --------------------------------
 hurdle_lognormal_mtp <- custom_family(
     "hurdle_lognormal_mtp",
     dpars = c("mu", "sigma", "hu"),

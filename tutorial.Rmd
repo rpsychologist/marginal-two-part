@@ -1,5 +1,5 @@
 ---
-title: 'Tutorial: Fitting the Marginal Two-part Gamma Model Using brms'
+title: 'Tutorial: Fitting the Marginalized Two-part Gamma Model Using brms'
 author: "Kristoffer Magnusson"
 date: '2019-08-29'
 output:
@@ -19,7 +19,7 @@ options(width = 120)
 ```
 
 # Introduction
-This document shows how to use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results. 
+This document shows how to use R and brms to fit the marginalized two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results. 
 
 ```{r}
 library(brms)
@@ -89,7 +89,7 @@ The `family` and `stanvar` arguments specify the custom model, the other argumen
 fit
 ```
 
-In this output, the coefficients that begin with `hu_` refer to the binary part of the model, which estimate changes to the log-odds of no losses. The other coefficients refer to the overall losses (which in the marginal two-part model includes the zeros), and they are on the log scale. These coefficients are interpreted like the coefficients from a standard generalized linear mixed-effects model. We will focus on the treatment effects, which in this model are represented by `time:treatment` and `hu_time:treatment`. We can see that the treatment leads to a reduction in the (log) overall losses by -0.11 per week (95% CI: -0.18, -0.04), and that the treatment increases the odds of reporting no losses by 0.07 log-odds per week. Thus it does seem like there is a beneficial effect of the treatment. To better interpret these effects, we will visualize the results and summarize the treatment effects as multiplicate effects and on the original scale. 
+In this output, the coefficients that begin with `hu_` refer to the binary part of the model, which estimate changes to the log-odds of no losses. The other coefficients refer to the overall losses (which in the marginalized two-part model includes the zeros), and they are on the log scale. These coefficients are interpreted like the coefficients from a standard generalized linear mixed-effects model. We will focus on the treatment effects, which in this model are represented by `time:treatment` and `hu_time:treatment`. We can see that the treatment leads to a reduction in the (log) overall losses by -0.11 per week (95% CI: -0.18, -0.04), and that the treatment increases the odds of reporting no losses by 0.07 log-odds per week. Thus it does seem like there is a beneficial effect of the treatment. To better interpret these effects, we will visualize the results and summarize the treatment effects as multiplicate effects and on the original scale. 
 
 # Change Over Time
 In order to visualize change over time, we ignore any random effects and focus on a typical patient with random effects at the center of the distribution.
@@ -229,7 +229,7 @@ pp_check(fit,
 ```
 
 # Lognormal Two-Part Model
-The file `code/custom_brms.R` includes the code needed to fit a marginal two-part lognormal model. The custom family is called `hurdle_lognormal_mtp` and the stanvars-object is called `hurdle_lognormal_mtp_stanvars`. The file also includes `fitted`, `predict` and `log_lik` methods for the lognormal MTP.
+The file `code/custom_brms.R` includes the code needed to fit a marginalized two-part lognormal model. The custom family is called `hurdle_lognormal_mtp` and the stanvars-object is called `hurdle_lognormal_mtp_stanvars`. The file also includes `fitted`, `predict` and `log_lik` methods for the lognormal MTP.
 
 # Session Info
 ```{r}

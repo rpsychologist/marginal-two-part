@@ -1,7 +1,7 @@
 # Modeling Longitudinal Gambling Data: Challenges and Opportunities
 
-This README consists of two parts: 1) the tutorial on how to fit the marginal two 
-part model, and 2) information about the simulation study.
+This README consists of two parts: 1) the tutorial on how to fit the marginalized 
+two part model, and 2) information about the simulation study.
 
 OSF link: [https://osf.io/6pbgv/](https://osf.io/6pbgv/)
 
