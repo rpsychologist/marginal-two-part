@@ -465,7 +465,7 @@ summary {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This document shows how use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results.</p>
+<p>This document shows how to use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results.</p>
 <pre class="r"><code>library(brms)
 library(tidyverse)
 theme_set(theme_minimal())
@@ -473,7 +473,7 @@ source(&quot;code/custom_brms.R&quot;)</code></pre>
 </div>
 <div id="the-data" class="section level1">
 <h1>The Data</h1>
-<p>This tutorial will use simulated data in order to allow sharing of the data set and reproducing using other software, the data can be found in <code>tutorial/tutorial.csv</code>. In the file we have 150 participants allocated either to a control or a treatment condition, each paricipant have 11 weekly measures. The measures represent the average daily gambling losses (in euros) during each week.</p>
+<p>This tutorial will use simulated data in order to allow sharing of the data set, and allow reproducing the results using other software. The data can be found in <code>tutorial/tutorial.csv</code>. In the file we have 150 participants allocated either to a control or a treatment condition, each participant have 11 weekly measures. The measures represent the average daily gambling losses (in euros) during each week.</p>
 <pre class="r"><code>d &lt;- read_csv(&quot;tutorial/tutorial.csv&quot;)
 d</code></pre>
 <pre><code>## # A tibble: 1,650 x 4
@@ -512,7 +512,7 @@ fit &lt;- brm(bf(y ~ time * treatment + (1 + time | c | subject),
            chains = 4,
            cores = 4,
            iter = 4000)</code></pre>
-<p>The <code>family</code> and <code>stanvar</code> arguments specify the custom model, the other arguments are standard <code>brms</code>-syntax, and covariates and random effects can be specified like in any other hurdle model. The model formula, <code>| c |</code> specifies that the random effects in the two part of the models are correlated (N.B, “c” i not a variable in our data and could be called something else). Let’s view the results.</p>
+<p>The <code>family</code> and <code>stanvar</code> arguments specify the custom model, the other arguments are standard <code>brms</code>-syntax. Covariates and random effects can be specified like in any other hurdle model. The model formula, <code>| c |</code> specifies that the random effects in the two part of the models are correlated (N.B, “c” i not a variable in our data and could be called something else). Let’s view the results.</p>
 <pre class="r"><code>fit</code></pre>
 <pre><code>##  Family: hurdle_gamma_mtp 
 ##   Links: shape = identity; mu = identity; hu = logit 
@@ -729,7 +729,7 @@ OR (zeros)
 </tr>
 </tbody>
 </table>
-<p>Thus for a “typical” patient (random effects at the center of the distribution), the treatment leads to an expected reduction in the monthly losses of €638 compared to the control group. This is a 66% reduction in the expected losses. Moreover, the treatment leads to a 2-fold increase in the odds of reporting no losses in one week. Although the 95% CI indicate more inconclusive results for the binary part, i.e., the CI includes 1.</p>
+<p>Thus for a “typical” patient (random effects at the center of the distribution), the treatment leads to an expected reduction in the monthly losses of €638 compared to a similar patient in the control group. This is a 66% reduction in the expected losses. Moreover, the treatment leads to a 2-fold increase in the odds of reporting no losses in one week. Although the 95% CI indicate more inconclusive results for the binary part, i.e., the CI includes 1.</p>
 </div>
 <div id="posterior-predictive-checks" class="section level1">
 <h1>Posterior Predictive Checks</h1>

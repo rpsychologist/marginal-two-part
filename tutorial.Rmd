@@ -19,7 +19,7 @@ options(width = 120)
 ```
 
 # Introduction
-This document shows how use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results. 
+This document shows how to use R and brms to fit the marginal two-part gamma model used in the article, and it also presents an example of how to visualize and summarize the results. 
 
 ```{r}
 library(brms)
@@ -30,7 +30,7 @@ source("code/custom_brms.R")
 
 
 # The Data
-This tutorial will use simulated data in order to allow sharing of the data set and reproducing using other software, the data can be found in `tutorial/tutorial.csv`. In the file we have 150 participants allocated either to a control or a treatment condition, each paricipant have 11 weekly measures. The measures represent the average daily gambling losses (in euros) during each week. 
+This tutorial will use simulated data in order to allow sharing of the data set, and allow reproducing the results using other software. The data can be found in `tutorial/tutorial.csv`. In the file we have 150 participants allocated either to a control or a treatment condition, each participant have 11 weekly measures. The measures represent the average daily gambling losses (in euros) during each week. 
 ```{r, eval = FALSE, echo = FALSE}
 # Not run
 ####################################
@@ -83,7 +83,7 @@ fit <- brm(bf(y ~ time * treatment + (1 + time | c | subject),
 
 ```
 
-The `family` and `stanvar` arguments specify the custom model, the other arguments are standard `brms`-syntax, and covariates and random effects can be specified like in any other hurdle model. The model formula, `| c |` specifies that the random effects in the two part of the models are correlated (N.B, "c" i not a variable in our data and could be called something else). Let's view the results.
+The `family` and `stanvar` arguments specify the custom model, the other arguments are standard `brms`-syntax. Covariates and random effects can be specified like in any other hurdle model. The model formula, `| c |` specifies that the random effects in the two part of the models are correlated (N.B, "c" i not a variable in our data and could be called something else). Let's view the results.
 
 ```{r}
 fit
@@ -198,7 +198,7 @@ samples %>%
                   bootstrap_options = c("hover"))
 ```
 
-Thus for a "typical" patient (random effects at the center of the distribution), the treatment leads to an expected reduction in the monthly losses of €638 compared to the control group. This is a 66% reduction in the expected losses. Moreover, the treatment leads to a 2-fold increase in the odds of reporting no losses in one week. Although the 95% CI indicate more inconclusive results for the binary part, i.e., the CI includes 1. 
+Thus for a "typical" patient (random effects at the center of the distribution), the treatment leads to an expected reduction in the monthly losses of €638 compared to a similar patient in the control group. This is a 66% reduction in the expected losses. Moreover, the treatment leads to a 2-fold increase in the odds of reporting no losses in one week. Although the 95% CI indicate more inconclusive results for the binary part, i.e., the CI includes 1. 
 
 # Posterior Predictive Checks
 Here is is a small example of how a posterior predictive check can be performed. This can be performed using the generic `pp_check`, since `code/custom.brms.R` includes a predict method for the custom model. In the first figure, we draw new samples from the model and compare them to the density of the observed data. 
