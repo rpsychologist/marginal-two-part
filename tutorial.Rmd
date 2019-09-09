@@ -69,7 +69,6 @@ prior <- c(prior(student_t(3, 0, 10), class = "Intercept"),
 We can then fit a random intercept and slopes model using the following syntax. 
 
 ```{r}
-# compile brms model
 fit <- brm(bf(y ~ time * treatment + (1 + time | c | subject),
               hu ~ time * treatment + (1 + time | c | subject)),
            data = d,
@@ -134,7 +133,9 @@ plot_trend <- function(fit, dpar = NULL, scale = "linear") {
         scale_x_continuous(breaks = 0:10) +
         scale_fill_manual(values = cols) +
         scale_color_manual(values = cols) +
-        theme(legend.position = "bottom")
+        theme(legend.position = "bottom") +
+        labs(fill = "Group",
+             color = "Group")
 }
 
 plot_trend(fit, scale = "response") + 
