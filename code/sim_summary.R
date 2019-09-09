@@ -3,7 +3,7 @@ library(tidyverse)
 source("code/functions_sim_summary.R")
 
 
-# Scenario 0 and 1 --------------------------------------------------------
+# Scenario 1 and 2 --------------------------------------------------------
 res0 <- readRDS("data/sim_1_0.Rds")
 res1 <- readRDS("data/sim_1_2.Rds")
 
@@ -18,7 +18,7 @@ res_sum <- summarize_multiple_objects(
 
 saveRDS(res_sum, file = "data/sim1_sum.Rds")
 
-# Scenari 2 --------------------------------------------------------------
+# Scenario 3 --------------------------------------------------------------
 res2 <- readRDS("data/sim_2_2.Rds")
 
 res_sum2 <- summarize_multiple_objects(
@@ -29,7 +29,7 @@ res_sum2 <- summarize_multiple_objects(
 
 saveRDS(res_sum2, file = "data/sim2_sum.Rds")
 
-# Scenario 3 --------------------------------------------------------------
+# Scenario 4 --------------------------------------------------------------
 res3 <- readRDS("data/sim_3.Rds")
 
 res_sum3 <- summarize_multiple_objects(
@@ -41,7 +41,7 @@ res_sum3 <- summarize_multiple_objects(
 saveRDS(res_sum3, file = "data/sim3_sum.Rds")
 
 
-# Scenario 4 --------------------------------------------------------------
+# Scenario 5 --------------------------------------------------------------
 res4 <- readRDS("data/sim_4_variance.Rds")
 
 res_sum4 <- summarize_multiple_objects(
