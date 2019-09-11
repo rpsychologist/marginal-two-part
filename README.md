@@ -23,12 +23,18 @@ in `code/compute_setup.R`
 ## Required packages
 ```{r}
 install.packages(c("brms", 
-                   "powerlmm", 
+                   "powerlmm", # version >= 0.5
                    "parallel",
                    "tidyverse", 
                    "ggstance", 
                    "cowplot"))
+
+# Powerlmm dev version used for the simulations                   
+devtools::install_local(path = "powerlmm_0.4.0.9000.tar.gz")                  
 ```
+
+At the time of writing, powerlmm version 0.5.0 is not yet published on CRAN. 
+A unfinished development version is therefore included with this repo.
 
 ## Run the simulation
 - `0_run_sims.R` sources all the simulation files. 
