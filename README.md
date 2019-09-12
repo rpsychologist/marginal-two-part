@@ -6,7 +6,7 @@ two part model, and 2) information about the simulation study.
 OSF link: [https://osf.io/6pbgv/](https://osf.io/6pbgv/)
 
 # Tutorial
-The tutorial can be found in `tutorial.html` ([HTML preview link](https://htmlpreview.github.io/?https://github.com/rpsychologist/marginal-two-part/tutorial.html)), 
+The tutorial can be found in `tutorial.html` ([HTML preview link](https://htmlpreview.github.io/?https://github.com/rpsychologist/marginal-two-part/blob/master/tutorial.html)), 
 or the source document `tutorial.Rmd`. The tutorial shows how to fit a custom marginalized 
 two-part gamma or lognormal model using `brms`.
 
