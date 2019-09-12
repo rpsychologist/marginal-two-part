@@ -3,6 +3,7 @@
 This README consists of two parts: 1) the tutorial on how to fit the marginalized 
 two part model, and 2) information about the simulation study.
 
+Preprint: [https://psyarxiv.com/uvxk2/](https://psyarxiv.com/uvxk2/)
 OSF link: [https://osf.io/6pbgv/](https://osf.io/6pbgv/)
 
 # Tutorial
