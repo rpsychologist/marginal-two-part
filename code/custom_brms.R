@@ -101,10 +101,14 @@ predict_hurdle_gamma_mtp <- function (i, draws, ...) {
                   rate = shape * exp(-mu))
            )
 }
-
 fitted_hurdle_gamma_mtp <- function (draws, ...) {
     with(draws$dpars, exp(mu))
 }
+
+# Method's were renamed in brms 2.11
+posterior_predict_hurdle_gamma_mtp <- predict_hurdle_gamma_mtp
+pp_expect_hurdle_gamma_mtp <- fitted_hurdle_gamma_mtp
+
 
 log_lik_hurdle_gamma_mtp <- function (i, draws) 
 {
@@ -122,7 +126,7 @@ log_lik_hurdle_gamma_mtp <- function (i, draws)
 }
 
 ## Lognormal MTP model
-predict_hurdle_lognormal_mtp<- function (i, draws, ...) {
+predict_hurdle_lognormal_mtp <- function (i, draws, ...) {
     
     # probs Y = 0
     hu <- draws$dpars$hu[, i]
@@ -143,6 +147,11 @@ predict_hurdle_lognormal_mtp<- function (i, draws, ...) {
 fitted_hurdle_lognormal_mtp <- function (draws, ...) {
     with(draws$dpars, exp(mu))
 }
+
+# Method's were renamed in brms 2.11
+posterior_predict_hurdle_lognormal_mtp <- predict_hurdle_lognormal_mtp
+pp_expect_hurdle_lognormal_mtp <- fitted_hurdle_lognormal_mtp
+
 log_lik_hurdle_lognormal_mtp <- function (i, draws) 
 {
     hu <- draws$dpars$hu[, i]
